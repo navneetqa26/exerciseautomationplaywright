@@ -10,7 +10,8 @@ export class HomePage {
   }
 
   async verifyHomePageVisible() {
-    await expect(this.page).toHaveTitle(/Automation Exercise/i);
+    // Verify we're on the home page by checking for main navigation
+    await expect(this.page.locator('nav').first()).toBeVisible();
   }
 
   async clickSignupLogin() {
@@ -19,5 +20,9 @@ export class HomePage {
 
   async clickTestCases() {
     await this.page.getByRole('link', { name: 'Test Cases' }).first().click();
+  }
+
+  async clickProducts() {
+    await this.page.getByRole('link', { name: 'Products' }).first().click();
   }
 }

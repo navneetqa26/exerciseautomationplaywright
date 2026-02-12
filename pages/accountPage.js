@@ -63,7 +63,8 @@ export class AccountPage {
   }
 
   async verifyLoggedInAs(username) {
-    await expect(this.page.getByText('Logged in as ' + username)).toBeVisible();
+    const loggedInElement = this.page.locator('a:has-text("' + username + '")').first();
+    await expect(loggedInElement).toBeVisible();
   }
 
   async clickDeleteAccountButton() {

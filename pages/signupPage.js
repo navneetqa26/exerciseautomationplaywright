@@ -108,6 +108,8 @@ export class SignupPage {
   }
 
   async verifyEmailAlreadyExistErrorVisible() {
-    await expect(this.page.getByText('Email Address already exist!')).toBeVisible();
+    // Verify error message appears on page using p tag with text match
+    const errorElement = this.page.locator('p').filter({ hasText: /Email Address already exist/i }).first();
+    await expect(errorElement).toBeVisible();
   }
 }
