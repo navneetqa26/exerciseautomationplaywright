@@ -38,4 +38,11 @@ export class HomePage {
   async clickSearchButton() {
     await this.page.locator('#submit_search').click();
   }
+
+  async scrollToFooter() {
+    // Scroll to the bottom so footer / subscription section becomes visible
+    await this.page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    // give the layout a moment to settle
+    await this.page.waitForTimeout(300);
+  }
 }

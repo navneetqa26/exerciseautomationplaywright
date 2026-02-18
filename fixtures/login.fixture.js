@@ -4,33 +4,7 @@ import path from 'path';
 
 export const test = base.extend({
   createdUser: async ({ page }, use) => {
-    const outDir = path.join(process.cwd(), 'test-data');
-    const inPath = path.join(outDir, 'created-user.json');
-
-    async function waitForFile(filePath, timeout = 20000, interval = 500) {
-      const start = Date.now();
-      while (Date.now() - start < timeout) {
-        try {
-          await fs.access(filePath);
-          return true;
-        } catch (e) {
-          await new Promise((r) => setTimeout(r, interval));
-        }
-      }
-      return false;
-    }
-
-    const found = await waitForFile(inPath, 20000, 500);
-
-    // If file exists, read and return it
-    if (found) {
-      const raw = await fs.readFile(inPath, 'utf8');
-      const created = JSON.parse(raw);
-      await use(created);
-      return;
-    }
-
-    // File not found — create a new user via the UI and persist it so dependent tests can run independently
+    // Always create a fresh user for every test run
     const timestamp = Date.now();
     const user = {
       name: 'user' + timestamp,
@@ -53,7 +27,6 @@ export const test = base.extend({
       year: '1990'
     };
 
-    // Use the existing page objects to perform signup
     const { HomePage } = await import('../pages/homePage.js');
     const { AccountPage } = await import('../pages/accountPage.js');
     const home = new HomePage(page);
@@ -74,12 +47,7 @@ export const test = base.extend({
     await account.verifyAccountCreatedVisible();
     await account.clickContinueButton();
     await account.verifyLoggedInAs(user.name);
-
-    // Persist created user for follow-up tests and then log out to avoid side effects
-    await fs.mkdir(outDir, { recursive: true });
-    await fs.writeFile(inPath, JSON.stringify(user, null, 2));
     await account.logout();
-
     await use(user);
   }
 });
